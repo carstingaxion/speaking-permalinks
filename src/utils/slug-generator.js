@@ -89,7 +89,8 @@ export function generateSlugFromTemplate(
 			const formatted = formatFieldValue(
 				varObj.field,
 				value,
-				varObj.format
+				varObj.format,
+				true // isMeta = true
 			);
 			return formatted;
 		}
@@ -99,7 +100,8 @@ export function generateSlugFromTemplate(
 		const formatted = formatFieldValue(
 			varObj.field,
 			value,
-			varObj.format
+			varObj.format,
+			false // isMeta = false
 		);
 		return formatted;
 	} );

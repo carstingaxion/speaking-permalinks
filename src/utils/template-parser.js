@@ -20,12 +20,14 @@ export function parseTemplateVariables( template ) {
 		const isMeta = variable.startsWith( 'meta:' );
 		const isTax = variable.startsWith( 'tax:' );
 
-		// Remove prefix if present
-		const withoutPrefix = isMeta
-			? variable.substring( 5 )
-			: isTax
-			? variable.substring( 4 )
-			: variable;
+		// // Remove prefix if present
+		let withoutPrefix = variable;
+
+		if ( isMeta ) {
+			withoutPrefix = variable.substring( 5 );
+		} else if ( isTax ) {
+			withoutPrefix = variable.substring( 4 );
+		}
 
 		// Split by | to get field and format (format comes last)
 		const parts = withoutPrefix.split( '|' );

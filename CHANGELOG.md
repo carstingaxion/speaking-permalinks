@@ -13,7 +13,8 @@ All notable changes to this project will be documented in this file.
 * Support for post fields and meta fields
 * Taxonomy term support with `{tax:taxonomy}` syntax
 * Array meta field support with `{meta:field:key}` syntax
-* Date and text formatting options
+* Date formatting for both post dates and meta dates
+* Intelligent date detection for meta fields
 * Real-time updates in editor
 * Graceful handling of missing fields, array keys, and taxonomy terms
 * Full WordPress coding standards compliance

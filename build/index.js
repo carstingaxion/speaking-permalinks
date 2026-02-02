@@ -140,7 +140,6 @@ const SlugGeneratorCore = ({
   // Extract required fields from variables
   const {
     postFields: postFieldsNeeded,
-    metaFields: metaFieldsNeeded,
     taxonomySlugs: taxonomySlugsNeeded
   } = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => (0,_utils_template_parser__WEBPACK_IMPORTED_MODULE_4__.extractRequiredFields)(variables), [variables]);
 
@@ -158,21 +157,28 @@ const SlugGeneratorCore = ({
       }
     });
     return values;
-  }, [postFieldsNeeded.join(','), postType, postId]);
+  }, [postFieldsNeeded]);
 
   // Get meta fields
   const [meta] = (0,_wordpress_core_data__WEBPACK_IMPORTED_MODULE_2__.useEntityProp)('postType', postType, 'meta', postId);
 
   // Get taxonomy data using custom hooks
   const {
-    taxonomyRestBases,
     taxonomyTermIds
-  } = (0,_hooks_use_taxonomy_data__WEBPACK_IMPORTED_MODULE_6__.useTaxonomyData)(taxonomySlugsNeeded, postType, postId);
+  } = (0,_hooks_use_taxonomy_data__WEBPACK_IMPORTED_MODULE_6__.useTaxonomyData)(taxonomySlugsNeeded);
   const taxonomyTerms = (0,_hooks_use_taxonomy_data__WEBPACK_IMPORTED_MODULE_6__.useTaxonomyTerms)(taxonomySlugsNeeded, taxonomyTermIds);
 
   // Get the current slug for comparison
   const [currentSlug, setPostSlug] = (0,_wordpress_core_data__WEBPACK_IMPORTED_MODULE_2__.useEntityProp)('postType', postType, 'slug', postId);
   const lastGeneratedSlug = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useRef)('');
+  const postFieldValuesString = JSON.stringify(postFieldValues);
+  const postFieldValuesKey = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => postFieldValuesString, [postFieldValuesString]);
+  const metaString = JSON.stringify(meta);
+  const metaKey = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => metaString, [metaString]);
+  const taxonomyTermIdsString = JSON.stringify(taxonomyTermIds);
+  const taxonomyTermIdsKey = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => taxonomyTermIdsString, [taxonomyTermIdsString]);
+  const taxonomyTermsString = JSON.stringify(taxonomyTerms);
+  const taxonomyTermsKey = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => taxonomyTermsString, [taxonomyTermsString]);
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     // Only generate slug if we have the necessary data
     if (!postId || !template) {
@@ -195,7 +201,7 @@ const SlugGeneratorCore = ({
       }
     }, 200);
     return () => clearTimeout(timeoutId);
-  }, [postId, template, JSON.stringify(postFieldValues), JSON.stringify(meta), JSON.stringify(taxonomyTermIds), JSON.stringify(taxonomyTerms), currentSlug, setPostSlug, variables]);
+  }, [postId, template, postFieldValuesKey, metaKey, taxonomyTermIdsKey, taxonomyTermsKey, currentSlug, setPostSlug, variables, postFieldValues, meta, taxonomyTerms]);
   return null;
 };
 
@@ -225,12 +231,10 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * Custom hook to fetch taxonomy REST bases and term IDs.
  *
- * @param {Array}  taxonomySlugs Array of taxonomy slugs needed.
- * @param {string} postType      Current post type.
- * @param {number} postId        Current post ID.
+ * @param {Array} taxonomySlugs Array of taxonomy slugs needed.
  * @return {Object} Object containing taxonomyRestBases and taxonomyTermIds.
  */
-function useTaxonomyData(taxonomySlugs, postType, postId) {
+function useTaxonomyData(taxonomySlugs) {
   // Get actual taxonomy REST bases from WordPress
   const taxonomyRestBases = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_1__.useSelect)(select => {
     const restBases = {};
@@ -244,10 +248,10 @@ function useTaxonomyData(taxonomySlugs, postType, postId) {
       }
     });
     return restBases;
-  }, [taxonomySlugs.join(',')]);
+  }, [taxonomySlugs]);
 
   // Memoize to prevent unnecessary re-renders
-  const memoizedRestBases = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => taxonomyRestBases, [JSON.stringify(taxonomyRestBases)]);
+  const memoizedRestBases = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => taxonomyRestBases, [taxonomyRestBases]);
 
   // Get actual taxonomy term IDs from WordPress
   const taxonomyTermIdsRaw = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_1__.useSelect)(select => {
@@ -265,10 +269,10 @@ function useTaxonomyData(taxonomySlugs, postType, postId) {
       }
     });
     return ids;
-  }, [taxonomySlugs.join(','), JSON.stringify(memoizedRestBases), postType, postId]);
+  }, [taxonomySlugs, memoizedRestBases]);
 
   // Memoize term IDs
-  const taxonomyTermIds = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => taxonomyTermIdsRaw, [JSON.stringify(taxonomyTermIdsRaw)]);
+  const taxonomyTermIds = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => taxonomyTermIdsRaw, [taxonomyTermIdsRaw]);
   return {
     taxonomyRestBases: memoizedRestBases,
     taxonomyTermIds
@@ -300,10 +304,10 @@ function useTaxonomyTerms(taxonomySlugs, taxonomyTermIds) {
       }
     });
     return terms;
-  }, [JSON.stringify(taxonomyTermIds), taxonomySlugs.join(',')]);
+  }, [taxonomySlugs, taxonomyTermIds]);
 
   // Memoize the taxonomy terms to prevent unnecessary re-renders
-  const taxonomyTerms = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => rawTaxonomyTerms, [JSON.stringify(rawTaxonomyTerms)]);
+  const taxonomyTerms = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => rawTaxonomyTerms, [rawTaxonomyTerms]);
   return taxonomyTerms;
 }
 
@@ -385,13 +389,15 @@ function generateSlugFromTemplate(template, variables, postFields, meta, taxonom
           return '';
         }
       }
-      const formatted = (0,_value_formatter_js__WEBPACK_IMPORTED_MODULE_0__.formatFieldValue)(varObj.field, value, varObj.format);
+      const formatted = (0,_value_formatter_js__WEBPACK_IMPORTED_MODULE_0__.formatFieldValue)(varObj.field, value, varObj.format, true // isMeta = true
+      );
       return formatted;
     }
 
     // Get post field value
     const value = postFields[varObj.field];
-    const formatted = (0,_value_formatter_js__WEBPACK_IMPORTED_MODULE_0__.formatFieldValue)(varObj.field, value, varObj.format);
+    const formatted = (0,_value_formatter_js__WEBPACK_IMPORTED_MODULE_0__.formatFieldValue)(varObj.field, value, varObj.format, false // isMeta = false
+    );
     return formatted;
   });
   return sanitizeSlug(slug);
@@ -430,8 +436,13 @@ function parseTemplateVariables(template) {
     const isMeta = variable.startsWith('meta:');
     const isTax = variable.startsWith('tax:');
 
-    // Remove prefix if present
-    const withoutPrefix = isMeta ? variable.substring(5) : isTax ? variable.substring(4) : variable;
+    // // Remove prefix if present
+    let withoutPrefix = variable;
+    if (isMeta) {
+      withoutPrefix = variable.substring(5);
+    } else if (isTax) {
+      withoutPrefix = variable.substring(4);
+    }
 
     // Split by | to get field and format (format comes last)
     const parts = withoutPrefix.split('|');
@@ -491,6 +502,40 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
+ * Check if a value looks like a date that can be formatted.
+ *
+ * @param {*} value The value to check.
+ * @return {boolean} True if the value looks like a date.
+ */
+function isDateLike(value) {
+  if (!value) {
+    return false;
+  }
+
+  // Check if it's a string that looks like a date
+  if (typeof value === 'string') {
+    // ISO 8601 format: YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS
+    if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+      return true;
+    }
+    // Unix timestamp (in seconds or milliseconds)
+    if (/^\d{10,13}$/.test(value)) {
+      return true;
+    }
+  }
+
+  // Check if it's a number that could be a Unix timestamp
+  if (typeof value === 'number') {
+    // Unix timestamps are typically 10 digits (seconds) or 13 digits (milliseconds)
+    const valueStr = String(value);
+    if (valueStr.length >= 10 && valueStr.length <= 13) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Format a date value with the specified PHP date format.
  *
  * @param {string} rawValue The raw date value.
@@ -538,6 +583,7 @@ function formatDateValue(rawValue, format) {
     // Default to Y-m-d
     return `${year}-${month}-${day}`;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('[Speaking Permalinks] Date formatting error:', error);
     return '';
   }
@@ -587,25 +633,48 @@ function applyTextFormatting(stringValue, format) {
 
 /**
  * Format a value based on the field type and format specification.
+ * Intelligently detects if a format is a date format and applies it accordingly.
  *
  * @param {string}      field  The field name.
  * @param {*}           value  The field value.
  * @param {string|null} format The format specification (e.g., 'Y-m-d', 'lower').
+ * @param {boolean}     isMeta Whether this is a meta field.
  * @return {string} The formatted value.
  */
-function formatFieldValue(field, value, format) {
+function formatFieldValue(field, value, format, isMeta = false) {
   if (!value) {
     return '';
   }
 
-  // Handle date fields specially
-  if (field === 'date') {
-    const rawValue = extractRawValue(value);
-    return formatDateValue(rawValue, format);
+  // Extract raw value first
+  const rawValue = extractRawValue(value);
+
+  // Check if we have a format to apply
+  if (!format) {
+    return rawValue;
   }
 
-  // For non-date fields, extract raw value and apply text formatting
-  const rawValue = extractRawValue(value);
+  // Detect if the format looks like a date format
+  // Common PHP date format characters: Y, m, d, H, i, s, etc.
+  const isDateFormat = /[YymdHisaABgGhFjlMnStTwWzZ]/.test(format);
+
+  // If it's explicitly a date field OR the format looks like a date format,
+  // try to format as a date
+  if (field === 'date' || isMeta && isDateFormat) {
+    // For meta fields, check if the value looks like a date
+    if (isMeta && !isDateLike(rawValue)) {
+      // Value doesn't look like a date, apply text formatting instead
+      return applyTextFormatting(rawValue, format);
+    }
+
+    // Try to format as a date
+    const formattedDate = formatDateValue(rawValue, format);
+    if (formattedDate) {
+      return formattedDate;
+    }
+  }
+
+  // For text formatting options (lower, upper)
   return applyTextFormatting(rawValue, format);
 }
 

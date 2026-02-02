@@ -5,12 +5,10 @@ import { store as editorStore } from '@wordpress/editor';
 /**
  * Custom hook to fetch taxonomy REST bases and term IDs.
  *
- * @param {Array}  taxonomySlugs Array of taxonomy slugs needed.
- * @param {string} postType      Current post type.
- * @param {number} postId        Current post ID.
+ * @param {Array} taxonomySlugs Array of taxonomy slugs needed.
  * @return {Object} Object containing taxonomyRestBases and taxonomyTermIds.
  */
-export function useTaxonomyData( taxonomySlugs, postType, postId ) {
+export function useTaxonomyData( taxonomySlugs ) {
 	// Get actual taxonomy REST bases from WordPress
 	const taxonomyRestBases = useSelect(
 		( select ) => {
@@ -29,13 +27,13 @@ export function useTaxonomyData( taxonomySlugs, postType, postId ) {
 
 			return restBases;
 		},
-		[ taxonomySlugs.join( ',' ) ]
+		[ taxonomySlugs ]
 	);
 
 	// Memoize to prevent unnecessary re-renders
 	const memoizedRestBases = useMemo(
 		() => taxonomyRestBases,
-		[ JSON.stringify( taxonomyRestBases ) ]
+		[ taxonomyRestBases ]
 	);
 
 	// Get actual taxonomy term IDs from WordPress
@@ -57,18 +55,13 @@ export function useTaxonomyData( taxonomySlugs, postType, postId ) {
 
 			return ids;
 		},
-		[
-			taxonomySlugs.join( ',' ),
-			JSON.stringify( memoizedRestBases ),
-			postType,
-			postId,
-		]
+		[ taxonomySlugs, memoizedRestBases ]
 	);
 
 	// Memoize term IDs
 	const taxonomyTermIds = useMemo(
 		() => taxonomyTermIdsRaw,
-		[ JSON.stringify( taxonomyTermIdsRaw ) ]
+		[ taxonomyTermIdsRaw ]
 	);
 
 	return { taxonomyRestBases: memoizedRestBases, taxonomyTermIds };
@@ -111,13 +104,13 @@ export function useTaxonomyTerms( taxonomySlugs, taxonomyTermIds ) {
 
 			return terms;
 		},
-		[ JSON.stringify( taxonomyTermIds ), taxonomySlugs.join( ',' ) ]
+		[ taxonomySlugs, taxonomyTermIds ]
 	);
 
 	// Memoize the taxonomy terms to prevent unnecessary re-renders
 	const taxonomyTerms = useMemo(
 		() => rawTaxonomyTerms,
-		[ JSON.stringify( rawTaxonomyTerms ) ]
+		[ rawTaxonomyTerms ]
 	);
 
 	return taxonomyTerms;

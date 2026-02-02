@@ -30,11 +30,8 @@ export const SlugGeneratorCore = ( { postType, postId, template } ) => {
 	);
 
 	// Extract required fields from variables
-	const {
-		postFields: postFieldsNeeded,
-		metaFields: metaFieldsNeeded,
-		taxonomySlugs: taxonomySlugsNeeded,
-	} = useMemo( () => extractRequiredFields( variables ), [ variables ] );
+	const { postFields: postFieldsNeeded, taxonomySlugs: taxonomySlugsNeeded } =
+		useMemo( () => extractRequiredFields( variables ), [ variables ] );
 
 	// Get all post data in one useSelect call
 	const postFieldValues = useSelect(
@@ -52,18 +49,14 @@ export const SlugGeneratorCore = ( { postType, postId, template } ) => {
 
 			return values;
 		},
-		[ postFieldsNeeded.join( ',' ), postType, postId ]
+		[ postFieldsNeeded ]
 	);
 
 	// Get meta fields
 	const [ meta ] = useEntityProp( 'postType', postType, 'meta', postId );
 
 	// Get taxonomy data using custom hooks
-	const { taxonomyRestBases, taxonomyTermIds } = useTaxonomyData(
-		taxonomySlugsNeeded,
-		postType,
-		postId
-	);
+	const { taxonomyTermIds } = useTaxonomyData( taxonomySlugsNeeded );
 
 	const taxonomyTerms = useTaxonomyTerms(
 		taxonomySlugsNeeded,
@@ -79,6 +72,27 @@ export const SlugGeneratorCore = ( { postType, postId, template } ) => {
 	);
 
 	const lastGeneratedSlug = useRef( '' );
+
+	const postFieldValuesString = JSON.stringify( postFieldValues );
+	const postFieldValuesKey = useMemo(
+		() => postFieldValuesString,
+		[ postFieldValuesString ]
+	);
+
+	const metaString = JSON.stringify( meta );
+	const metaKey = useMemo( () => metaString, [ metaString ] );
+
+	const taxonomyTermIdsString = JSON.stringify( taxonomyTermIds );
+	const taxonomyTermIdsKey = useMemo(
+		() => taxonomyTermIdsString,
+		[ taxonomyTermIdsString ]
+	);
+
+	const taxonomyTermsString = JSON.stringify( taxonomyTerms );
+	const taxonomyTermsKey = useMemo(
+		() => taxonomyTermsString,
+		[ taxonomyTermsString ]
+	);
 
 	useEffect( () => {
 		// Only generate slug if we have the necessary data
@@ -116,13 +130,16 @@ export const SlugGeneratorCore = ( { postType, postId, template } ) => {
 	}, [
 		postId,
 		template,
-		JSON.stringify( postFieldValues ),
-		JSON.stringify( meta ),
-		JSON.stringify( taxonomyTermIds ),
-		JSON.stringify( taxonomyTerms ),
+		postFieldValuesKey,
+		metaKey,
+		taxonomyTermIdsKey,
+		taxonomyTermsKey,
 		currentSlug,
 		setPostSlug,
 		variables,
+		postFieldValues,
+		meta,
+		taxonomyTerms,
 	] );
 
 	return null;

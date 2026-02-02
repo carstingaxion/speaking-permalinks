@@ -51,8 +51,20 @@ defined( 'ABSPATH' ) || exit;
  * - {tax:custom_taxonomy} - Custom taxonomy term slugs
  * 
  * Format Suffixes:
- * - Date formatting: {date|Y-m-d}, {date|Y}, {date|m}, {date|d}
+ * - Date formatting (works with post dates and meta dates):
+ *   - {date|Y-m-d}, {date|Y}, {date|m}, {date|d}
+ *   - {meta:event_date|Y-m-d} - Format meta field date
+ *   - {meta:event_date|Y} - Just year from meta field
  * - Text formatting: {title|lower}, {title|upper}
+ * 
+ * Date Formatting with Meta Fields:
+ * The system intelligently detects when you're using date format characters
+ * (Y, m, d, H, i, s, etc.) and automatically applies date formatting to meta
+ * fields that contain date values. For example:
+ * 
+ * - {meta:event_date|Y-m-d} - Format "2026-05-15" as "2026-05-15"
+ * - {meta:event_date|Y} - Format "2026-05-15" as "2026"
+ * - {meta:gatherpress_datetime_start|Y} - Just the year from the event start date
  * 
  * To enable this feature for other post types:
  * 
@@ -70,6 +82,18 @@ function add_support(): void {
 		'speaking-permalinks',
 		array(
 			'template' => '{date|Y}-{title}-{tax:category}',
+		)
+	);
+	add_post_type_support(
+		'gatherpress_event',
+		'speaking-permalinks',
+		array(
+			// WORKING
+			// 'template' => '{title}-{tax:_gatherpress_venue}',
+			// NOT WORKING, see #1
+			// 'template' => '{title}-{tax:_gatherpress_venue}-{meta:venue_information:city}',
+			// SEMI-WORKING, but not live-updating, because GatherPress uses its own date store.
+			'template' => '{title}-{tax:_gatherpress_venue}-{meta:gatherpress_datetime_start|Y-m}',
 		)
 	);
 }
