@@ -1,4 +1,4 @@
-**# Speaking P**ermalinks
+# Speaking Permalinks
 
 **Contributors:**      carstenbach & WordPress Telex  
 **Tags:**              permalink, url, post, page, slug, dynamic  
@@ -172,7 +172,7 @@ The system works with various date formats:
 
 If a meta field doesn't contain a date value, text formatting will be applied instead.
 
-= How do I use taxonomy terms in slugs? =
+### How do I use taxonomy terms in slugs?
 
 Use the syntax `{tax:taxonomy_name}` where `taxonomy_name` is the taxonomy slug (e.g., `category`, `post_tag`, or any custom taxonomy).
 
