@@ -61,8 +61,10 @@ defined( 'ABSPATH' ) || exit;
  *         'template' => '{date|Y-m-d}-{title}'
  *     ) );
  * } );
+ *
+ * @return void
  */
-function add_support() {
+function add_support(): void {
 	add_post_type_support(
 		'post',
 		'speaking-permalinks',
@@ -73,8 +75,26 @@ function add_support() {
 }
 add_action( 'init', __NAMESPACE__ . '\add_support' );
 
-function enqueue_block_editor_assets() {
-	$asset_file = include plugin_dir_path( __FILE__ ) . 'build/index.asset.php';
+/**
+ * Enqueue block editor assets for the Speaking Permalinks plugin.
+ *
+ * This function loads the JavaScript file necessary for the block editor
+ * functionality of the Speaking Permalinks plugin.
+ *
+ * @return void
+ */
+function enqueue_block_editor_assets(): void {
+
+	$asset_file_path = plugin_dir_path( __FILE__ ) . 'build/index.asset.php';
+	if ( ! file_exists( $asset_file_path ) ) {
+		return;
+	}
+	/** 
+	 * Safe types coming from the wp-scripts package
+	 * 
+	 * @var array{version:string, dependencies:array<string>} $asset_file
+	 */
+	$asset_file = require_once $asset_file_path; // phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable
 
 	wp_enqueue_script(
 		'speaking-permalinks-block-editor',

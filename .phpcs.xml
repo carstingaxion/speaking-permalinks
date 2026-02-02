@@ -19,4 +19,17 @@
 			</property>
 		</properties>
 	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="speakingpermalinks"/>
+				<element value="__NAMESPACE__"/>
+			</property>
+
+		</properties>
+	</rule> 
+	<rule ref="Universal">
+		<exclude name="Universal.Namespaces.EnforceCurlyBraceSyntax.Forbidden" />
+		<exclude name="Universal.PHP.RequireExitDieParentheses.Missing" />
+	</rule>
 </ruleset>
