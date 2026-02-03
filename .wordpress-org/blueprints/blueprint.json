@@ -49,9 +49,14 @@
         "caption": "Installing plugin from GitHub: carstingaxion/speaking-permalinks"
       }
     },
+   {
+      "step": "mkdir",
+      "path": "/wordpress/wp-content/mu-plugins"
+    },
     {
-      "step": "runPHP",
-      "code": "<?php require_once '/wordpress/wp-load.php'; add_action( 'init', function() {\nadd_post_type_support( 'post', 'speaking-permalinks', array(\n'template' => '{date|Y}-{title}-{tax:post_tag}'\n) );\n} );"
+      "step": "writeFile",
+      "path": "/wordpress/wp-content/mu-plugins/speaking-permalinks-post-support.php",
+      "data": "<?php add_action( 'init', function() {\nadd_post_type_support( 'post', 'speaking-permalinks', array(\n'template' => '{date|Y}-{title}-{tax:post_tag}'\n) );\n} );"
     }
   ]
 }
