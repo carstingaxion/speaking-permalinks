@@ -1,0 +1,46 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "landingPage": "/",
+  "preferredVersions": {
+    "php": "8.2",
+    "wp": "latest"
+  },
+  "features": {
+    "networking": true
+  },
+  "steps": [
+    {
+      "step": "setSiteOptions",
+      "options": {
+        "blogname": "Speaking Permalinks",
+        "blogdescription": "Enhancing WordPress with speaking permalinks.",
+        "permalink_structure": "/%postname%/"
+      }
+    },
+    {
+      "step": "login",
+      "username": "admin"
+    },
+    {
+      "step": "updateUserMeta",
+      "meta": {
+          "admin_color": "modern"
+      },
+      "userId": 1
+    },
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "git:directory",
+        "url": "https://github.com/carstingaxion/speaking-permalinks",
+        "ref": "HEAD"
+      },
+      "options": {
+        "activate": true
+      },
+      "progress": {
+        "caption": "Installing plugin from GitHub: carstingaxion/speaking-permalinks"
+      }
+    }
+  ]
+}
