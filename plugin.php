@@ -78,26 +78,19 @@ defined( 'ABSPATH' ) || exit;
  */
 function add_support(): void {
 	add_post_type_support(
-		'post',
-		'speaking-permalinks',
-		array(
-			'template' => '{date|Y}-{title}-{tax:category}',
-		)
-	);
-	add_post_type_support(
 		'gatherpress_event',
 		'speaking-permalinks',
 		array(
 			// WORKING
 			// 'template' => '{title}-{tax:_gatherpress_venue}',
 			// NOT WORKING, see #1
-			// 'template' => '{title}-{tax:_gatherpress_venue}-{meta:venue_information:city}',
+			// 'template' => '{title}-{meta:venue_information:city}',
 			// SEMI-WORKING, but not live-updating, because GatherPress uses its own date store.
-			'template' => '{title}-{tax:_gatherpress_venue}-{meta:gatherpress_datetime_start|Y-m}',
+			'template' => '{title}-{tax:_gatherpress_venue}-{meta:gatherpress_datetime_start|Y}',
 		)
 	);
 }
-add_action( 'init', __NAMESPACE__ . '\add_support' );
+add_action( 'registered_post_type_gatherpress_event', __NAMESPACE__ . '\add_support' );
 
 /**
  * Enqueue block editor assets for the Speaking Permalinks plugin.

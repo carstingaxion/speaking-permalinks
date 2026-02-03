@@ -1,6 +1,6 @@
 {
   "$schema": "https://playground.wordpress.net/blueprint-schema.json",
-  "landingPage": "/",
+  "landingPage": "/wp-admin/post.php?post=42&action=edit",
   "preferredVersions": {
     "php": "8.2",
     "wp": "latest"
@@ -29,6 +29,13 @@
       "userId": 1
     },
     {
+      "step": "runPHP",
+      "code": "<?php require_once '/wordpress/wp-load.php';\n$page_args = array(\n'post_type'    => 'post',\n'post_status'  => 'publish',\n'post_title'   => 'Speaking Permalinks',\n'post_content' => '<!-- wp:paragraph -->\n<p>The Plugin is made with:</p>\n<!-- /wp:paragraph -->\n<!-- wp:list {\"className\":\"is-style-default\"} -->\n<ul class=\"wp-block-list is-style-default\"><!-- wp:list-item -->\n<li>No block</li>\n<!-- /wp:list-item -->\n<!-- wp:list-item -->\n<li>No extra Editor UI</li>\n<!-- /wp:list-item -->\n<!-- wp:list-item -->\n<li>No Settings Page</li>\n<!-- /wp:list-item --></ul>\n<!-- /wp:list -->\n<!-- wp:paragraph -->\n<p>Just open the Settings sidebar, select \"Post\" and watch the \"Slug\" field change as you make edits to the current post.</p>\n<!-- /wp:paragraph -->\n<!-- wp:paragraph -->\n<p>For this Playground demo, the <em><strong>Speaking Permalinks</strong></em> plugin was registered to provide support for the builtin <code>post</code> <code>post_type</code>.</p>\n<!-- /wp:paragraph -->\n<!-- wp:code {\"align\":\"wide\"} -->\n<pre class=\"wp-block-code alignwide\"><code>add_action( \\'init\\', function() {\nadd_post_type_support( \\'post\\', \\'speaking-permalinks\\', array(\n\\'template\\' => \\'{date|Y}-{title}-{tax:post_tag}\\'\n) );\n} );</code></pre>\n<!-- /wp:code -->\n<!-- wp:paragraph -->\n<p>The template for the slug generation <code>{date|Y}-{title}-{tax:post_tag}</code>, will pre-generate the posts slug inside the editor with:</p>\n<!-- /wp:paragraph -->\n<!-- wp:list -->\n<ul class=\"wp-block-list\"><!-- wp:list-item -->\n<li>year the post was published</li>\n<!-- /wp:list-item -->\n<!-- wp:list-item -->\n<li>post title (like normal)</li>\n<!-- /wp:list-item -->\n<!-- wp:list-item -->\n<li>the posts tags separated by hyphens</li>\n<!-- /wp:list-item --></ul>\n<!-- /wp:list -->\n<!-- wp:paragraph -->\n<p>Which could result in slug like: <code>2026-my-post-technology-news</code>, for a post published 2026, with a title of \\'my post\\' and tagged with \"Technology\" and \"News\".</p>\n<!-- /wp:paragraph -->',\n'import_id'    => 42,\n);\n$page_id = wp_insert_post( $page_args, true );\nif ( is_wp_error( $page_id ) ) {\nerror_log( 'addPost error: ' . $page_id->get_error_message() );\n}",
+      "progress": {
+        "caption": "Crafting a 'Speaking Permalinks' Demo Page"
+      }
+    },
+    {
       "step": "installPlugin",
       "pluginData": {
         "resource": "git:directory",
@@ -41,6 +48,10 @@
       "progress": {
         "caption": "Installing plugin from GitHub: carstingaxion/speaking-permalinks"
       }
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php require_once '/wordpress/wp-load.php'; add_action( 'init', function() {\nadd_post_type_support( 'post', 'speaking-permalinks', array(\n'template' => '{date|Y}-{title}-{tax:post_tag}'\n) );\n} );"
     }
   ]
 }

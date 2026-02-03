@@ -45,8 +45,8 @@ The **speaking-permalinks** plugin provides automatic slug generation based on c
 
 1. Upload the plugin files to the `/wp-content/plugins/speaking-permalinks` directory, or install through the WordPress plugins screen
 2. Activate the plugin through the 'Plugins' screen in WordPress
-3. Speaking permalinks are automatically enabled for the 'post' post type with the default template
-4. To enable for other post types or customize templates, add this to your theme's `functions.php`:
+3. Speaking permalinks are automatically enabled ONLY for the `gatherpress_event` post type *(because this was my personal need, to create this plugin)*
+4. To enable for other post types or customize templates, add something like this to your theme's `functions.php`:
 
 ```php
 add_action( 'init', function() {
