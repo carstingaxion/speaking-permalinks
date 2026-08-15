@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Speaking Permalinks
  * Description:       A plugin that does automatic slug generation from customizable templates using post data, meta fields, and taxonomy terms.
- * Version:           0.1.0
+ * Version:           0.1.1
  * Requires at least: 6.1
  * Requires PHP:      7.4
  * Author:            carstenbach

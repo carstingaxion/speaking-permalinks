@@ -1,6 +1,6 @@
 {
     "name": "speaking-permalinks",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "A plugin that does automatic slug generation from customizable templates using post data, meta fields, and taxonomy terms.",
     "author": "Carsten Bach",
     "license": "GPL-2.0-or-later",
